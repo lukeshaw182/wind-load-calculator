@@ -35,7 +35,7 @@ z0, zmin = terrain_params[terrain_cat]
 
 # --- STAGE 2: Basic Wind Velocity ---
 st.markdown("---")
-st.subheader("Stage 2: Basic Wind Velocity ($v_b$)")
+st.subheader("Stage 2: Basic Wind Velocity (vb)")
 col_v1, col_v2 = st.columns(2)
 with col_v1:
     vb_map = st.number_input("v_b,map (m/s) [Manual Map Input]", value=21.5, step=0.5)
@@ -48,7 +48,7 @@ vb_0 = vb_map * c_alt
 vb = c_dir * c_season * vb_0
 
 st.latex(r"v_b = c_{\text{dir}} \cdot c_{\text{season}} \cdot v_{b,\text{map}} \cdot c_{\text{alt}}")
-st.info(f"**Calculated Basic Wind Velocity ($v_b$):** `{vb:.2f} m/s` (where $c_{\text{alt}} = {c_alt:.3f}$)")
+st.info(f"Calculated Basic Wind Velocity (vb): {vb:.2f} m/s (where c_alt = {c_alt:.3f})")
 
 # --- STAGE 3: Wind Speed & Turbulence at Height z ---
 st.markdown("---")
@@ -62,45 +62,45 @@ kl = 1.0
 Iv_z = kl / (co_z * math.log(max(z, zmin) / z0))
 
 st.latex(r"v_m(z) = c_r(z) \cdot c_o(z) \cdot v_b \quad | \quad I_v(z) = \frac{k_I}{c_o(z) \cdot \ln(z/z_0)}")
-st.write(f"* Roughness Factor $k_r$: `{kr:.3f}`")
-st.write(f"* Mean Velocity $v_m(z)$: `{vm_z:.2f} m/s`")
-st.write(f"* Turbulence Intensity $I_v(z)$: `{Iv_z:.3f}`")
+st.write(f"* Roughness Factor kr: {kr:.3f}")
+st.write(f"* Mean Velocity vm(z): {vm_z:.2f} m/s")
+st.write(f"* Turbulence Intensity Iv(z): {Iv_z:.3f}")
 
 # --- STAGE 4: Peak Velocity Pressure ---
 st.markdown("---")
-st.subheader("Stage 4: Peak Velocity Pressure ($q_p(z)$)")
+st.subheader("Stage 4: Peak Velocity Pressure (qp(z))")
 
 rho = 1.226  # UK air density kg/m³
 qp_z = (1.0 + 7.0 * Iv_z) * 0.5 * rho * (vm_z**2)  # Pa
 
 st.latex(r"q_p(z) = [1 + 7 \cdot I_v(z)] \cdot \frac{1}{2} \cdot \rho \cdot v_m(z)^2")
-st.success(f"**Peak Velocity Pressure $q_p(z)$:** `{qp_z / 1000:.3f} kN/m²` (`{qp_z:.1f} Pa`)")
+st.success(f"Peak Velocity Pressure qp(z): {qp_z / 1000:.3f} kN/m² ({qp_z:.1f} Pa)")
 
 # --- STAGE 5 & 6: Force Calculation ---
 st.markdown("---")
-st.subheader("Stages 5 & 6: Structural Force ($F_w$)")
+st.subheader("Stages 5 & 6: Structural Force (Fw)")
 
 col_f1, col_f2 = st.columns(2)
 with col_f1:
-    cf = st.number_input("Force Coefficient (c_f)", value=1.6, step=0.1, help="From §7.11 for lattice structures based on solidity.")
+    cf = st.number_input("Force Coefficient (cf)", value=1.6, step=0.1, help="From Section 7.11 for lattice structures based on solidity.")
     envelope_area = st.number_input("Total Envelope Area (m²)", value=60.0, step=5.0)
 with col_f2:
-    cscd = st.number_input("Structural Factor (c_s c_d)", value=1.0, step=0.05)
+    cscd = st.number_input("Structural Factor (cscd)", value=1.0, step=0.05)
 
 aref = solidity * envelope_area
 fw = cscd * cf * (qp_z / 1000.0) * aref  # in kN
 
 st.latex(r"F_w = c_s c_d \cdot c_f \cdot q_p(z_e) \cdot A_{\text{ref}}")
-st.write(f"* Solid Reference Area ($A_{\text{ref}}$): `{aref:.1f} m²`")
-st.warning(f"**Characteristic Wind Force ($F_w$):** `{fw:.2f} kN`")
+st.write(f"* Solid Reference Area (Aref): {aref:.1f} m²")
+st.warning(f"Characteristic Wind Force (Fw): {fw:.2f} kN")
 
 # --- STAGE 7 & 8: Design Actions & EC3 Handover ---
 st.markdown("---")
 st.subheader("Stages 7 & 8: EN 1990 Combinations & EC3 Handover")
 
-gamma_q = st.number_input("Partial Factor for Wind ($\gamma_Q$)", value=1.5, step=0.05)
+gamma_q = st.number_input("Partial Factor for Wind (gamma_Q)", value=1.5, step=0.05)
 fw_ed = gamma_q * fw
 
 st.latex(r"F_{w,\text{Ed}} = \gamma_Q \cdot F_w")
-st.success(f"**Design Wind Force ($F_{w,\text{Ed}}$):** `{fw_ed:.2f} kN`")
+st.success(f"Design Wind Force (Fw,Ed): {fw_ed:.2f} kN")
 st.markdown("This design force now resolves into individual member axial/shear forces to feed directly into **EN 1993-1-1** member checks and **EN 1993-1-8** connection design.")
