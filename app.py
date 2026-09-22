@@ -20,7 +20,7 @@ with st.expander("📌 Project Data Sheet", expanded=True):
             options=["0 (Sea/Coastal)", "I (Lakes/Flat)", "II (Open Country)", "III (Suburban/Forest)", "IV (Urban)"],
             index=2
         )
-        altitude = st.number_input("Altitude, A (m AOD)", value=30.0, step=5.0)
+        altitude = st.number_input("Altitude, A (m AOD)", value=30.0, step=1.0)
         solidity = st.number_input("Solidity Ratio, phi (for lattice frame)", value=0.30, step=0.05)
 
 # Terrain constants mapping (z0, zmin)
